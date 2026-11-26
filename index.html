@@ -98,6 +98,14 @@ h2{font-size:1.25rem}
 .qtext{font:600 1.2rem/1.4 var(--f-body);margin:0;text-wrap:pretty}
 .qimg{background:#fff;border-radius:10px;padding:8px;border:1px solid var(--line);display:flex;justify-content:center;position:relative}
 .qimg img{width:100%;max-width:640px;height:auto;cursor:zoom-in;image-rendering:auto}
+.qfig{margin:0;display:flex;flex-direction:column;gap:6px}
+.qimg .crop{width:100%;max-width:640px;overflow:hidden}
+.qimg .crop img{display:block}
+.figbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;font-size:.78rem;color:var(--muted)}
+.figtoggle{border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:5px 10px;font-weight:600;font-size:.8rem;color:var(--accent)}
+.figtoggle:hover{border-color:var(--accent)}
+.credit{min-width:0;overflow-wrap:anywhere}
+.credit a{color:var(--muted)}
 .qimg .zoomhint{position:absolute;right:8px;bottom:8px;font:500 .7rem var(--f-mono);background:rgba(16,41,42,.75);color:#fff;border-radius:6px;padding:2px 6px;pointer-events:none}
 .lightbox{position:fixed;inset:0;z-index:50;background:rgba(6,20,20,.92);display:flex;align-items:center;justify-content:center;padding:calc(16px + env(safe-area-inset-top,0px)) max(12px,env(safe-area-inset-right,0px)) calc(16px + env(safe-area-inset-bottom,0px)) max(12px,env(safe-area-inset-left,0px));cursor:zoom-out}
 .lightbox img{background:#fff;border-radius:8px;max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain}
@@ -226,7 +234,14 @@ function nextQ(){
   const score=q=>{const s=st(q.id);if(s.n&&s.b===0)return 0+Math.random();if(!s.n)return 1+Math.random();return 2+s.b*1.2-Math.min((now-s.t)/864e5,3)*.3+Math.random()*.8};
   let best=null,bs=1e9;for(const q of src){const v=score(q);if(v<bs){bs=v;best=q}}
   sess.cur=best;sess.answered=null;renderQ()}
-function qImg(q){return q.img?`<div class="qimg"><img src="${q.img}" alt="Abbildung zu Frage ${q.id}" loading="lazy" data-zoom="1"><span class="zoomhint">Antippen = groß</span></div>`:""}
+let FOTO={};const ORIGVIEW=new Set();
+function fotoImg(f,q){const im=`<img src="${f.u}" alt="Foto zu Frage ${q.id}" loading="lazy" data-zoom="1" referrerpolicy="no-referrer">`;
+  if(!f.crop)return im;const [x,y,w,h]=f.crop,ar=f.ar||1;
+  return `<div class="crop" style="aspect-ratio:${(w/(h*ar)).toFixed(3)}"><img src="${f.u}" alt="Foto zu Frage ${q.id}" loading="lazy" data-zoom="1" referrerpolicy="no-referrer" style="width:${(100/w).toFixed(2)}%;max-width:none;margin-left:-${(x/w*100).toFixed(2)}%;margin-top:-${(y*ar/w*100).toFixed(2)}%"></div>`}
+function qImg(q){if(!q.img)return "";const f=FOTO[q.id],orig=!f||ORIGVIEW.has(q.id);
+  const main=orig?`<img src="${q.img}" alt="Abbildung zu Frage ${q.id}" loading="lazy" data-zoom="1">`:fotoImg(f,q);
+  return `<figure class="qfig" data-q="${q.id}"><div class="qimg">${main}<span class="zoomhint">Antippen = groß</span></div>${f?`<div class="figbar"><button type="button" class="figtoggle" data-fig="${q.id}">${orig?"Scharfes Foto zeigen":"Prüfungsbild zeigen"}</button><span class="credit">${orig?"Original aus dem amtlichen Katalog":`Foto: ${esc(f.by)} · ${esc(f.lic)} · <a href="${f.src}" target="_blank" rel="noopener">Quelle</a>`}</span></div>`:""}</figure>`}
+document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest(".figtoggle");if(!b)return;const id=b.dataset.fig;ORIGVIEW.has(id)?ORIGVIEW.delete(id):ORIGVIEW.add(id);const fig=b.closest("figure");const q=Q.find(x=>x.id===id);if(fig&&q)fig.outerHTML=qImg(q)});
 document.addEventListener("click",e=>{
   const im=e.target.closest&&e.target.closest("img[data-zoom]");
   if(im){const lb=document.createElement("div");lb.className="lightbox";lb.setAttribute("role","dialog");lb.setAttribute("aria-label","Bild vergrößert");lb.innerHTML=`<img src="${im.getAttribute("src")}" alt="${esc(im.alt)}">`;lb.onclick=()=>lb.remove();document.body.appendChild(lb);return}
@@ -337,7 +352,8 @@ function list(){
 
 /* ---------- boot ---------- */
 load();
-fetch("fragen.json").then(r=>{if(!r.ok)throw new Error(r.status);return r.json()}).then(d=>{
+const fotoP=(location.hostname.endsWith("vercel.app")||location.hostname==="localhost"||location.hostname==="127.0.0.1")?fetch("fotos.json").then(r=>r.ok?r.json():{}).catch(()=>({})):Promise.resolve({});
+Promise.all([fetch("fragen.json").then(r=>{if(!r.ok)throw new Error(r.status);return r.json()}),fotoP]).then(([d,f])=>{FOTO=f||{};
   Q=d;[1,2,3,4,5].forEach(g=>BY[g]=Q.filter(q=>q.g===g));
   const h=location.hash.slice(1);go(["lernen","pruefung","katalog"].includes(h)?h:"lernen");
 }).catch(()=>{app.innerHTML='<p class="lead">Der Fragenkatalog konnte nicht geladen werden. Bitte lade die Seite neu.</p>'});
