@@ -48,13 +48,12 @@ p{margin:0}
 .inner{max-width:680px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
 
 /* Kopf */
-.top{background:var(--lake);color:var(--on-lake);margin-top:calc(-1 * env(safe-area-inset-top,0px));padding-top:calc(env(safe-area-inset-top,0px) + 14px);padding-bottom:14px}
-.top .inner{display:flex;align-items:center;gap:12px}
-.logo{width:42px;height:42px;flex:none;border-radius:11px;overflow:hidden;display:block}
-.top h1{font-size:24px;letter-spacing:.01em}
-.top p{font-size:13px;opacity:.82;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.top{background:var(--bg);border-bottom:1px solid var(--line);padding-top:18px;padding-bottom:12px}
+.top .inner{display:flex;align-items:flex-end;gap:12px}
+.top .eyebrow{font-family:var(--f-mono);font-size:11px;font-weight:600;letter-spacing:.08em;color:var(--lake-2);text-transform:uppercase}
+.top h1{font-size:34px;letter-spacing:.005em;line-height:1;margin-top:4px}
 .top .grow{flex:1;min-width:0}
-.themeBtn{width:40px;height:40px;flex:none;border-radius:50%;display:grid;place-items:center;color:var(--on-lake);background:rgba(255,255,255,.1)}
+.themeBtn{width:38px;height:38px;flex:none;border-radius:50%;display:grid;place-items:center;color:var(--muted);background:var(--sunk);border:1px solid var(--line)}
 .ring{width:48px;height:48px;flex:none;position:relative}
 .ring svg{display:block}
 .ring span{position:absolute;inset:0;display:grid;place-items:center;font-family:var(--f-mono);font-size:12px;font-weight:600}
@@ -164,10 +163,9 @@ mark{background:var(--lake-soft);color:inherit;border-radius:3px}
 </head>
 <body>
 <header class="top"><div class="inner">
-  <svg class="logo" viewBox="0 0 512 512" aria-hidden="true"><rect width="512" height="512" fill="#0f7a6d"/><path d="M150 240 L84 182 Q98 240 84 298 Z" fill="#f4fbf9"/><path d="M138 240 C190 146 352 136 428 240 C352 344 190 334 138 240 Z" fill="#f4fbf9"/><path d="M232 168 Q268 116 330 156 Q286 160 262 178 Z" fill="#f4fbf9"/><circle cx="376" cy="226" r="13" fill="#074640"/><path d="M206 246 L246 284 L318 204" fill="none" stroke="#0b6e63" stroke-width="28" stroke-linecap="round" stroke-linejoin="round"/><path d="M96 380 Q136 360 176 380 T256 380 T336 380 T416 380" fill="none" stroke="#f08a3c" stroke-width="14" stroke-linecap="round"/></svg>
-  <div class="grow"><h1>Fischerprüfung</h1><p>Bayern · amtlicher Katalog 2026</p></div>
-  <button class="themeBtn" id="themeBtn" aria-label="Hell oder dunkel umschalten"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path id="themeIco" d="M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5z"/></svg></button>
-  <div class="ring" title="sicher gelernt"><svg width="48" height="48" viewBox="0 0 48 48"><circle cx="24" cy="24" r="20" fill="none" stroke="rgba(255,255,255,.2)" stroke-width="5"/><circle id="ringArc" cx="24" cy="24" r="20" fill="none" stroke="#f08a3c" stroke-width="5" stroke-linecap="round" stroke-dasharray="0 126" transform="rotate(-90 24 24)"/></svg><span id="ringTxt">0%</span></div>
+  <div class="grow"><div class="eyebrow">Bayern · Katalog 2026</div><h1>Fischerprüfung</h1></div>
+  <button class="themeBtn" id="themeBtn" aria-label="Hell oder dunkel umschalten"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path id="themeIco" d="M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5z"/></svg></button>
+  <div class="ring" title="sicher gelernt"><svg width="48" height="48" viewBox="0 0 48 48"><circle cx="24" cy="24" r="20" fill="none" stroke="var(--line)" stroke-width="5"/><circle id="ringArc" cx="24" cy="24" r="20" fill="none" stroke="var(--lure)" stroke-width="5" stroke-linecap="round" stroke-dasharray="0 126" transform="rotate(-90 24 24)"/></svg><span id="ringTxt">0%</span></div>
 </div></header>
 
 <main class="inner"><div id="view" class="stack"><div class="card"><p class="muted">Fragen werden geladen …</p></div></div></main>
