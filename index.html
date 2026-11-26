@@ -1,0 +1,347 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0b6e63">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Fischerprüfung">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Fischerprüfung Bayern</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Layout: one calm column like a river channel; sticky header with tabs; questions as the single focal object */
+:root{
+  --bg:#eef3f1;          /* pale lake water */
+  --surface:#ffffff;
+  --sunk:#e2eae7;
+  --ink:#10292a;         /* deep pool */
+  --muted:#557370;
+  --line:#c9d7d3;
+  --accent:#0b6e63;      /* Huchen-Grün */
+  --accent-ink:#ffffff;
+  --accent-soft:#d3ebe5;
+  --good:#1f7a3a; --good-soft:#dcf1e1;
+  --bad:#b3362b;  --bad-soft:#f8e0dc;
+  --warn:#9a6a00;
+  --f-display:"Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --f-body:"Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-mono:"JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0c1a1b; --surface:#132527; --sunk:#0f2022; --ink:#e3eeec; --muted:#8fa9a5; --line:#24403f;
+  --accent:#3fbfa8; --accent-ink:#06201c; --accent-soft:#163b36;
+  --good:#5fd07e; --good-soft:#173a24; --bad:#ff8a7c; --bad-soft:#47201c; --warn:#e6b450; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0c1a1b; --surface:#132527; --sunk:#0f2022; --ink:#e3eeec; --muted:#8fa9a5; --line:#24403f;
+  --accent:#3fbfa8; --accent-ink:#06201c; --accent-soft:#163b36;
+  --good:#5fd07e; --good-soft:#173a24; --bad:#ff8a7c; --bad-soft:#47201c; --warn:#e6b450; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:15px/1.55 var(--f-body);margin:0}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--surface)}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.wrap{max-width:760px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--surface);border-bottom:1px solid var(--line)}
+.bar{display:flex;align-items:center;gap:12px;padding-block:10px;flex-wrap:wrap}
+.brand{font-family:var(--f-display);font-weight:700;font-size:1.15rem;letter-spacing:-.01em;margin-right:auto;display:flex;align-items:baseline;gap:8px}
+.brand .logo{width:28px;height:28px;align-self:center;flex:none}
+.brand small{font:500 .72rem var(--f-mono);color:var(--muted);letter-spacing:.02em}
+nav{display:flex;gap:4px;background:var(--sunk);padding:3px;border-radius:10px}
+nav button{border:0;background:none;padding:6px 12px;border-radius:8px;font-weight:500;color:var(--muted)}
+nav button[aria-current="page"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.08)}
+main{padding-block:24px 64px}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0;letter-spacing:-.015em}
+h1{font-size:clamp(1.6rem,4vw,2.1rem);line-height:1.15}
+h2{font-size:1.25rem}
+.lead{color:var(--muted);max-width:62ch;margin:.4rem 0 0}
+.stack{display:flex;flex-direction:column;gap:16px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.btn{border:1px solid var(--line);background:var(--surface);padding:9px 16px;border-radius:10px;font-weight:600}
+.btn:hover{border-color:var(--accent)}
+.btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.btn.ghost{background:none;border-color:transparent;color:var(--muted)}
+.btn:disabled{opacity:.45;cursor:default}
+.mono{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.eyebrow{font:500 .72rem var(--f-mono);text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+
+/* overview */
+.summary{display:grid;grid-template-columns:auto 1fr;gap:20px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:20px}
+.ring{width:96px;height:96px}
+.ring text{font-family:var(--f-display);font-weight:700;fill:var(--ink)}
+.areas{display:grid;grid-template-columns:1fr;gap:8px}
+.area{display:grid;grid-template-columns:28px 1fr auto;gap:4px 12px;align-items:center;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.area:hover{border-color:var(--accent)}
+.area .num{grid-row:span 2;font:700 1.25rem var(--f-display);color:var(--accent)}
+.area .name{font-weight:600}
+.area .cnt{font-size:.82rem;color:var(--muted)}
+.track{grid-column:2/4;height:6px;border-radius:3px;background:var(--sunk);overflow:hidden;display:flex}
+.track i{display:block;height:100%}
+.track .s{background:var(--accent)} .track .l{background:var(--accent-soft)} .track .w{background:var(--bad);opacity:.7}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:.8rem;color:var(--muted)}
+.legend span::before{content:"";display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;vertical-align:-1px;background:var(--c)}
+
+/* question */
+.qcard{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:16px}
+.qmeta{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;align-items:center}
+.pill{font:500 .75rem var(--f-mono);padding:3px 8px;border-radius:999px;background:var(--sunk);color:var(--muted)}
+.pill.new{background:var(--accent-soft);color:var(--accent)}
+.pill.redo{background:var(--bad-soft);color:var(--bad)}
+.qtext{font:600 1.2rem/1.4 var(--f-body);margin:0;text-wrap:pretty}
+.qimg{background:#fff;border-radius:10px;padding:8px;border:1px solid var(--line);display:flex;justify-content:center;position:relative}
+.qimg img{width:100%;max-width:640px;height:auto;cursor:zoom-in;image-rendering:auto}
+.qimg .zoomhint{position:absolute;right:8px;bottom:8px;font:500 .7rem var(--f-mono);background:rgba(16,41,42,.75);color:#fff;border-radius:6px;padding:2px 6px;pointer-events:none}
+.lightbox{position:fixed;inset:0;z-index:50;background:rgba(6,20,20,.92);display:flex;align-items:center;justify-content:center;padding:calc(16px + env(safe-area-inset-top,0px)) max(12px,env(safe-area-inset-right,0px)) calc(16px + env(safe-area-inset-bottom,0px)) max(12px,env(safe-area-inset-left,0px));cursor:zoom-out}
+.lightbox img{background:#fff;border-radius:8px;max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain}
+@media (orientation:portrait){.lightbox img{width:100%}}
+.answers{display:flex;flex-direction:column;gap:8px}
+.ans{display:grid;grid-template-columns:32px 1fr;gap:10px;align-items:start;text-align:left;border:1.5px solid var(--line);background:var(--bg);border-radius:12px;padding:12px}
+.ans .L{font:500 .9rem var(--f-mono);width:28px;height:28px;border-radius:8px;display:grid;place-items:center;background:var(--surface);border:1px solid var(--line)}
+.ans:not(:disabled):hover{border-color:var(--accent)}
+.ans.sel{border-color:var(--accent);background:var(--accent-soft)}
+.ans.ok{border-color:var(--good);background:var(--good-soft)}
+.ans.ok .L{background:var(--good);color:#fff;border-color:var(--good)}
+.ans.no{border-color:var(--bad);background:var(--bad-soft)}
+.ans.no .L{background:var(--bad);color:#fff;border-color:var(--bad)}
+.ans:disabled{cursor:default}
+.explain{border-left:3px solid var(--accent);padding:4px 0 4px 14px}
+.explain.bad{border-color:var(--bad)}
+.explain b{display:block;margin-bottom:2px}
+.explain p{margin:0;max-width:65ch}
+.sessionbar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;font-size:.88rem;color:var(--muted)}
+.kbd{font:500 .72rem var(--f-mono);border:1px solid var(--line);border-bottom-width:2px;border-radius:4px;padding:0 5px;color:var(--muted)}
+
+/* exam */
+.timer{font:700 1.4rem var(--f-mono);font-variant-numeric:tabular-nums}
+.timer.low{color:var(--bad)}
+.grid60{display:grid;grid-template-columns:repeat(12,1fr);gap:4px}
+.grid60 button{border:1px solid var(--line);background:var(--surface);border-radius:6px;padding:4px 0;font:500 .72rem var(--f-mono)}
+.grid60 button.done{background:var(--accent-soft);border-color:var(--accent-soft);color:var(--accent)}
+.grid60 button.cur{outline:2px solid var(--accent)}
+.grid60 button.r{background:var(--good-soft);color:var(--good);border-color:var(--good-soft)}
+.grid60 button.f{background:var(--bad-soft);color:var(--bad);border-color:var(--bad-soft)}
+@media (max-width:520px){.grid60{grid-template-columns:repeat(10,1fr)}}
+.verdict{border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:6px}
+.verdict.pass{background:var(--good-soft)} .verdict.fail{background:var(--bad-soft)}
+.verdict .big{font:700 2.4rem/1 var(--f-display)}
+table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums}
+td,th{padding:8px 6px;border-bottom:1px solid var(--line);text-align:left}
+th{font:500 .72rem var(--f-mono);text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+td.r{text-align:right}
+.st-ok{color:var(--good);font-weight:600}.st-no{color:var(--bad);font-weight:600}
+.confirm{background:var(--surface);border:1px solid var(--bad);border-radius:12px;padding:14px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+
+/* catalog */
+.search{display:flex;gap:8px;flex-wrap:wrap}
+.search input,.search select{font:inherit;color:inherit;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:9px 12px}
+.search input{flex:1 1 220px;min-width:0}
+.item{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:8px}
+.item .qa{font-weight:600}
+.item ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:2px;font-size:.92rem}
+.item li{color:var(--muted)}
+.item li.k{color:var(--good);font-weight:600}
+.item .e{font-size:.9rem;margin:0;max-width:65ch}
+.item .qimg img{max-width:420px}
+mark{background:var(--accent-soft);color:inherit;border-radius:2px}
+.note{font-size:.82rem;color:var(--muted);max-width:65ch}
+.note a{color:var(--accent)}
+@media (prefers-reduced-motion:no-preference){.qcard{animation:in .18s ease-out}@keyframes in{from{transform:translateY(4px);opacity:.6}to{transform:none;opacity:1}}}
+@media (max-width:520px){.summary{grid-template-columns:1fr;justify-items:start}.qtext{font-size:1.08rem}}
+</style>
+
+</head>
+<body>
+<header>
+  <div class="wrap bar">
+    <div class="brand"><svg class="logo" viewBox="0 0 512 512" aria-hidden="true"><rect width="512" height="512" rx="112" fill="#0b6e63"/><path d="M150 240 L84 182 Q98 240 84 298 Z" fill="#f4fbf9"/><path d="M138 240 C190 146 352 136 428 240 C352 344 190 334 138 240 Z" fill="#f4fbf9"/><path d="M232 168 Q268 116 330 156 Q286 160 262 178 Z" fill="#f4fbf9"/><circle cx="376" cy="226" r="13" fill="#074640"/><path d="M206 246 L246 284 L318 204" fill="none" stroke="#0b6e63" stroke-width="28" stroke-linecap="round" stroke-linejoin="round"/><path d="M96 380 Q136 360 176 380 T256 380 T336 380 T416 380" fill="none" stroke="#5fd3bd" stroke-width="14" stroke-linecap="round"/></svg>Fischerprüfung <small>BAYERN · KATALOG 2023/24</small></div>
+    <nav aria-label="Bereiche">
+      <button id="nav-lernen" data-v="lernen">Lernen</button>
+      <button id="nav-pruefung" data-v="pruefung">Prüfung</button>
+      <button id="nav-katalog" data-v="katalog">Katalog</button>
+    </nav>
+  </div>
+</header>
+<main class="wrap" id="app"><p class="lead">Fragen werden geladen …</p></main>
+
+<script>
+const AREAS={1:"Fischkunde",2:"Gewässerkunde",3:"Gewässerschutz & Hege",4:"Fanggeräte & Fischbehandlung",5:"Rechtsvorschriften"};
+const KEY="fp-bayern-v1";
+let Q=[],BY={},S={p:{},exams:[]},view="lernen",sess=null,exam=null,timerId=null;
+const $=s=>document.querySelector(s), app=$("#app");
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+function load(){try{const d=JSON.parse(localStorage.getItem(KEY)||"null");if(d&&d.p)S=d}catch(e){}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+const st=id=>S.p[id]||{b:0,n:0,w:0,t:0};
+function record(id,ok){const s={...st(id)};s.n++;s.t=Date.now();if(ok)s.b=Math.min(s.b+1,5);else{s.b=0;s.w++}S.p[id]=s;save()}
+const level=id=>{const s=st(id);return s.n===0?"new":s.b>=2?"sure":s.b===0?"weak":"learn"};
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a}
+function statsFor(list){const c={new:0,sure:0,learn:0,weak:0};list.forEach(q=>c[level(q.id)]++);return c}
+
+/* ---------- routing ---------- */
+function go(v){view=v;try{history.replaceState(null,"","#"+v)}catch(e){location.hash=v}
+  document.querySelectorAll("nav button").forEach(b=>b.setAttribute("aria-current",b.dataset.v===v?"page":"false"));
+  if(v==="lernen")(sess?renderQ():renderHome());else if(v==="pruefung")renderExam();else renderKatalog();window.scrollTo(0,0)}
+document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>go(b.dataset.v));
+addEventListener("hashchange",()=>{const h=location.hash.slice(1);if(["lernen","pruefung","katalog"].includes(h)&&h!==view)go(h)});
+
+/* ---------- home ---------- */
+function ring(p){const r=40,c=2*Math.PI*r;return `<svg class="ring" viewBox="0 0 96 96" role="img" aria-label="${p} Prozent sicher"><circle cx="48" cy="48" r="${r}" fill="none" stroke="var(--sunk)" stroke-width="9"/>${p?"":"<!--"}<circle cx="48" cy="48" r="${r}" fill="none" stroke="var(--accent)" stroke-width="9" stroke-linecap="round" stroke-dasharray="${c*p/100} ${c}" transform="rotate(-90 48 48)"/>${p?"":"-->"}<text x="48" y="54" text-anchor="middle" font-size="20">${p}%</text></svg>`}
+function renderHome(){
+  const all=statsFor(Q),pct=Math.round(all.sure/Q.length*100),weak=Q.filter(q=>level(q.id)==="weak").length;
+  const last=S.exams[S.exams.length-1];
+  app.innerHTML=`<div class="stack">
+  <div><h1>Bereit für 45 von 60?</h1><p class="lead">Alle ${Q.length} amtlichen Fragen des bayerischen Katalogs, jede mit Erklärung. Eine Frage gilt als sicher, wenn du sie zweimal hintereinander richtig beantwortet hast.</p></div>
+  <div class="summary">${ring(pct)}<div class="stack" style="gap:10px">
+    <div><b class="mono">${all.sure}</b> sicher · <b class="mono">${all.learn}</b> in Arbeit · <b class="mono">${all.weak}</b> zuletzt falsch · <b class="mono">${all.new}</b> neu</div>
+    <div class="row"><button class="btn primary" id="st-all">Alle Gebiete mischen</button><button class="btn" id="st-weak" ${weak?"":"disabled"}>Fehler wiederholen (${weak})</button></div>
+    ${last?`<div class="note">Letzte Prüfungssimulation: <b class="mono">${last.score}/60</b> – ${last.pass?"bestanden":"nicht bestanden"} (${new Date(last.d).toLocaleDateString("de-DE")})</div>`:""}
+  </div></div>
+  <div class="row" style="justify-content:space-between"><h2>Nach Prüfungsgebiet</h2><div class="legend"><span style="--c:var(--accent)">sicher</span><span style="--c:var(--accent-soft)">in Arbeit</span><span style="--c:var(--bad)">falsch</span></div></div>
+  <div class="areas">${[1,2,3,4,5].map(g=>{const l=BY[g],c=statsFor(l),w=n=>(n/l.length*100).toFixed(2)+"%";
+    return `<button class="area" data-g="${g}"><span class="num">${g}</span><span class="name">${AREAS[g]}</span><span class="cnt mono">${c.sure}/${l.length}</span><span class="track"><i class="s" style="width:${w(c.sure)}"></i><i class="l" style="width:${w(c.learn)}"></i><i class="w" style="width:${w(c.weak)}"></i></span></button>`}).join("")}</div>
+  <p class="note">Quelle: <a href="https://www.lfl.bayern.de/mam/cms07/ifi/dateien/fragenkatalog_2023-endversion.pdf" target="_blank" rel="noopener">Prüfungsfragen 2023/2024 der LfL Bayern</a>. Fragen, Antworten und Lösungen stammen wörtlich aus dem Katalog, die Erklärungen sind ergänzend formuliert. Dein Fortschritt wird nur in diesem Browser gespeichert. <button class="btn ghost" id="reset" style="padding:2px 4px;font-size:.82rem">Fortschritt zurücksetzen</button></p>
+  <div id="resetbox"></div></div>`;
+  $("#st-all").onclick=()=>startSess(0);$("#st-weak").onclick=()=>startSess("weak");
+  app.querySelectorAll(".area").forEach(b=>b.onclick=()=>startSess(+b.dataset.g));
+  $("#reset").onclick=()=>{$("#resetbox").innerHTML=`<div class="confirm"><span>Gesamten Lernfortschritt und alle Prüfungsergebnisse löschen?</span><button class="btn" id="r-yes" style="border-color:var(--bad);color:var(--bad)">Löschen</button><button class="btn ghost" id="r-no">Abbrechen</button></div>`;
+    $("#r-yes").onclick=()=>{S={p:{},exams:[]};save();renderHome()};$("#r-no").onclick=()=>$("#resetbox").innerHTML=""};
+}
+
+/* ---------- learning session ---------- */
+function startSess(scope){sess={scope,recent:[],n:0,ok:0,cur:null,answered:null};nextQ()}
+function pool(){const s=sess.scope;return s==="weak"?Q.filter(q=>level(q.id)==="weak"):s?BY[s]:Q}
+function nextQ(){
+  const P=pool().filter(q=>!sess.recent.includes(q.id));const src=P.length?P:pool();
+  if(!src.length){sess=null;renderHome();return}
+  const now=Date.now();
+  // Priorität: zuletzt falsch (nach kurzer Pause) > neu > niedrige Box & lange her
+  const score=q=>{const s=st(q.id);if(s.n&&s.b===0)return 0+Math.random();if(!s.n)return 1+Math.random();return 2+s.b*1.2-Math.min((now-s.t)/864e5,3)*.3+Math.random()*.8};
+  let best=null,bs=1e9;for(const q of src){const v=score(q);if(v<bs){bs=v;best=q}}
+  sess.cur=best;sess.answered=null;renderQ()}
+function qImg(q){return q.img?`<div class="qimg"><img src="${q.img}" alt="Abbildung zu Frage ${q.id}" loading="lazy" data-zoom="1"><span class="zoomhint">Antippen = groß</span></div>`:""}
+document.addEventListener("click",e=>{
+  const im=e.target.closest&&e.target.closest("img[data-zoom]");
+  if(im){const lb=document.createElement("div");lb.className="lightbox";lb.setAttribute("role","dialog");lb.setAttribute("aria-label","Bild vergrößert");lb.innerHTML=`<img src="${im.getAttribute("src")}" alt="${esc(im.alt)}">`;lb.onclick=()=>lb.remove();document.body.appendChild(lb);return}
+});
+addEventListener("keydown",e=>{if(e.key==="Escape"){const lb=document.querySelector(".lightbox");if(lb)lb.remove()}});
+function renderQ(){
+  const q=sess.cur,a=sess.answered,lv=level(q.id),scopeName=sess.scope==="weak"?"Fehler wiederholen":sess.scope?AREAS[sess.scope]:"Alle Gebiete";
+  const tag=lv==="new"?'<span class="pill new">neu</span>':lv==="weak"?'<span class="pill redo">zuletzt falsch</span>':lv==="sure"?'<span class="pill">sicher</span>':'<span class="pill">in Arbeit</span>';
+  app.innerHTML=`<div class="stack">
+  <div class="sessionbar"><span>${esc(scopeName)} · <b class="mono">${sess.ok}/${sess.n}</b> richtig in dieser Runde</span><button class="btn ghost" id="end">Runde beenden</button></div>
+  <article class="qcard">
+    <div class="qmeta"><span class="eyebrow">Frage ${q.id} · ${AREAS[q.g]}</span>${tag}</div>
+    <p class="qtext">${esc(q.q)}</p>${qImg(q)}
+    <div class="answers">${q.a.map((t,i)=>{let c="";if(a!==null){if(i===q.k)c="ok";else if(i===a)c="no"}
+      return `<button class="ans ${c}" data-i="${i}" ${a!==null?"disabled":""}><span class="L">${"ABC"[i]}</span><span>${esc(t)}</span></button>`}).join("")}</div>
+    ${a!==null?`<div class="explain ${a===q.k?"":"bad"}"><b>${a===q.k?"Richtig.":"Leider falsch – richtig ist "+"ABC"[q.k]+"."}</b><p>${esc(q.e)}</p></div>
+    <div class="row"><button class="btn primary" id="next">Nächste Frage</button><span class="note"><span class="kbd">Enter</span> weiter</span></div>`
+    :`<span class="note">Tastatur: <span class="kbd">1</span> <span class="kbd">2</span> <span class="kbd">3</span> oder <span class="kbd">A</span> <span class="kbd">B</span> <span class="kbd">C</span></span>`}
+  </article></div>`;
+  $("#end").onclick=()=>{sess=null;renderHome()};
+  app.querySelectorAll(".ans").forEach(b=>b.onclick=()=>answer(+b.dataset.i));
+  if(a!==null)$("#next").focus();
+}
+function answer(i){if(!sess||sess.answered!==null)return;const q=sess.cur,ok=i===q.k;sess.answered=i;sess.n++;if(ok)sess.ok++;record(q.id,ok);
+  sess.recent.push(q.id);if(sess.recent.length>(ok?6:4))sess.recent.shift();renderQ()}
+addEventListener("keydown",e=>{if(e.target.matches("input,select,textarea")||e.metaKey||e.ctrlKey||e.altKey)return;
+  const k=e.key.toLowerCase(),idx={"1":0,"2":1,"3":2,a:0,b:1,c:2}[k];
+  if(view==="lernen"&&sess){if(sess.answered===null&&idx!==undefined){e.preventDefault();answer(idx)}else if(sess.answered!==null&&k==="enter"){e.preventDefault();nextQ()}}
+  if(view==="pruefung"&&exam&&!exam.done){if(idx!==undefined){e.preventDefault();examPick(idx)}else if(k==="arrowright"){examGo(exam.i+1)}else if(k==="arrowleft"){examGo(exam.i-1)}}});
+document.addEventListener("click",e=>{if(e.target.id==="next")nextQ()});
+
+/* ---------- exam ---------- */
+function renderExam(){
+  if(exam&&!exam.done)return renderExamQ();
+  if(exam&&exam.done)return renderResult();
+  const hist=S.exams.slice(-5).reverse();
+  app.innerHTML=`<div class="stack">
+  <div><h1>Prüfungssimulation</h1><p class="lead">Wie in der echten Online-Prüfung: 60 Fragen, je 12 aus jedem der fünf Prüfungsgebiete, zufällig aus dem Katalog gezogen. Du hast 60 Minuten. Die Auflösung kommt erst nach der Abgabe.</p></div>
+  <div class="qcard"><h2>Bestanden, wenn …</h2>
+  <table><tr><td>höchstens ein Viertel falsch</td><td class="r mono">mind. 45 von 60 richtig</td></tr><tr><td>in jedem Gebiet höchstens die Hälfte falsch</td><td class="r mono">mind. 6 von 12 je Gebiet</td></tr></table>
+  <div class="row"><button class="btn primary" id="ex-start">Prüfung starten</button></div></div>
+  ${hist.length?`<div class="stack" style="gap:8px"><h2>Bisherige Durchgänge</h2><table><tr><th>Datum</th><th>Ergebnis</th><th></th></tr>${hist.map(h=>`<tr><td>${new Date(h.d).toLocaleString("de-DE",{dateStyle:"short",timeStyle:"short"})}</td><td class="mono">${h.score}/60</td><td class="${h.pass?"st-ok":"st-no"}">${h.pass?"bestanden":"nicht bestanden"}</td></tr>`).join("")}</table></div>`:""}
+  <p class="note">Rechtsgrundlage: AVBayFiG § 4 – 60 Minuten, 60 Fragen; nicht bestanden bei mehr als einem Viertel falscher Antworten insgesamt oder mehr als der Hälfte in einem Prüfungsgebiet.</p></div>`;
+  $("#ex-start").onclick=startExam;
+}
+function startExam(){const qs=[];[1,2,3,4,5].forEach(g=>qs.push(...shuffle(BY[g]).slice(0,12)));
+  exam={qs:shuffle(qs),ans:Array(60).fill(null),i:0,end:Date.now()+3600e3,done:false,confirm:false};
+  clearInterval(timerId);timerId=setInterval(tick,1000);renderExamQ()}
+function fmt(ms){ms=Math.max(0,ms);const m=Math.floor(ms/6e4),s=Math.floor(ms/1e3)%60;return String(m).padStart(2,"0")+":"+String(s).padStart(2,"0")}
+function tick(){if(!exam||exam.done){clearInterval(timerId);return}const left=exam.end-Date.now();const t=$("#timer");if(t){t.textContent=fmt(left);t.classList.toggle("low",left<5*6e4)}if(left<=0)submitExam()}
+function examGo(i){if(i<0||i>59)return;exam.i=i;exam.confirm=false;renderExamQ()}
+function examPick(i){exam.ans[exam.i]=i;renderExamQ()}
+function renderExamQ(){
+  if(view!=="pruefung")return;const q=exam.qs[exam.i],a=exam.ans[exam.i],open=exam.ans.filter(x=>x===null).length;
+  app.innerHTML=`<div class="stack">
+  <div class="sessionbar"><span class="timer" id="timer">${fmt(exam.end-Date.now())}</span><span><b class="mono">${60-open}</b>/60 beantwortet</span></div>
+  <div class="grid60" aria-label="Fragenübersicht">${exam.qs.map((_,i)=>`<button class="${exam.ans[i]!==null?"done":""} ${i===exam.i?"cur":""}" data-i="${i}" aria-label="Frage ${i+1}">${i+1}</button>`).join("")}</div>
+  <article class="qcard">
+    <div class="qmeta"><span class="eyebrow">Frage ${exam.i+1} von 60</span><span class="pill">${AREAS[q.g]}</span></div>
+    <p class="qtext">${esc(q.q)}</p>${qImg(q)}
+    <div class="answers">${q.a.map((t,i)=>`<button class="ans ${a===i?"sel":""}" data-i="${i}"><span class="L">${"ABC"[i]}</span><span>${esc(t)}</span></button>`).join("")}</div>
+    <div class="row" style="justify-content:space-between"><div class="row"><button class="btn" id="prev" ${exam.i?"":"disabled"}>Zurück</button><button class="btn primary" id="fwd" ${exam.i<59?"":"disabled"}>Weiter</button></div><button class="btn" id="sub">Abgeben</button></div>
+    ${exam.confirm?`<div class="confirm"><span>${open?`Noch ${open} Fragen offen. Offene Fragen zählen als falsch. `:""}Jetzt abgeben?</span><button class="btn primary" id="sub-yes">Abgeben</button><button class="btn ghost" id="sub-no">Weiter prüfen</button></div>`:""}
+  </article>
+  <div class="row" style="justify-content:flex-end"><button class="btn ghost" id="abort">Prüfung abbrechen</button></div></div>`;
+  app.querySelectorAll(".grid60 button").forEach(b=>b.onclick=()=>examGo(+b.dataset.i));
+  app.querySelectorAll(".ans").forEach(b=>b.onclick=()=>examPick(+b.dataset.i));
+  $("#prev").onclick=()=>examGo(exam.i-1);$("#fwd").onclick=()=>examGo(exam.i+1);
+  $("#sub").onclick=()=>{exam.confirm=true;renderExamQ()};
+  if(exam.confirm){$("#sub-yes").onclick=submitExam;$("#sub-no").onclick=()=>{exam.confirm=false;renderExamQ()}}
+  $("#abort").onclick=()=>{clearInterval(timerId);exam=null;renderExam()};
+}
+function submitExam(){if(!exam||exam.done)return;clearInterval(timerId);exam.done=true;
+  const per={1:0,2:0,3:0,4:0,5:0};let score=0;
+  exam.qs.forEach((q,i)=>{const ok=exam.ans[i]===q.k;if(ok){score++;per[q.g]++}record(q.id,ok)});
+  const pass=score>=45&&Object.values(per).every(v=>v>=6);exam.res={score,per,pass};
+  S.exams.push({d:Date.now(),score,pass,per});if(S.exams.length>50)S.exams.shift();save();
+  if(view==="pruefung")renderResult()}
+function renderResult(){const {score,per,pass}=exam.res,wrong=exam.qs.map((q,i)=>({q,a:exam.ans[i]})).filter(x=>x.a!==x.q.k);
+  app.innerHTML=`<div class="stack">
+  <div class="verdict ${pass?"pass":"fail"}"><span class="eyebrow">Prüfungssimulation</span><span class="big mono">${score}/60</span><b>${pass?"Bestanden.":"Nicht bestanden."}</b>
+   <span>${pass?"Du hast die 45er-Marke und in jedem Gebiet mindestens 6 Punkte erreicht.":score<45?`Dir fehlen ${45-score} richtige Antworten bis zur 45er-Marke.`:"Insgesamt reicht es, aber mindestens ein Gebiet liegt unter 6 von 12."}</span></div>
+  <table><tr><th>Gebiet</th><th class="r">Richtig</th><th></th></tr>${[1,2,3,4,5].map(g=>`<tr><td>${g} · ${AREAS[g]}</td><td class="r mono">${per[g]}/12</td><td class="${per[g]>=6?"st-ok":"st-no"}">${per[g]>=6?"✓":"unter 6"}</td></tr>`).join("")}</table>
+  <div class="row"><button class="btn primary" id="again">Neue Prüfung</button><button class="btn" id="tolearn">Fehler lernen</button></div>
+  ${wrong.length?`<h2>Deine ${wrong.length} Fehler</h2>${wrong.map(({q,a})=>`<div class="item"><span class="eyebrow">Frage ${q.id} · ${AREAS[q.g]}</span><div class="qa">${esc(q.q)}</div>${qImg(q)}<ul>${q.a.map((t,i)=>`<li class="${i===q.k?"k":""}">${"ABC"[i]}) ${esc(t)}${i===a?" <span class=\"st-no\">← deine Antwort</span>":""}</li>`).join("")}</ul>${a===null?'<span class="st-no" style="font-size:.85rem">nicht beantwortet</span>':""}<p class="e">${esc(q.e)}</p></div>`).join("")}`:"<p>Keine Fehler – stark.</p>"}
+  </div>`;
+  $("#again").onclick=()=>{exam=null;startExam()};$("#tolearn").onclick=()=>{exam=null;go("lernen");startSess("weak")};
+}
+
+/* ---------- catalog ---------- */
+let kat={term:"",g:"0",n:40};
+function renderKatalog(){
+  app.innerHTML=`<div class="stack"><div><h1>Fragenkatalog</h1><p class="lead">Alle Fragen mit Lösung und Erklärung zum Nachschlagen. Suche nach Fischart, Begriff oder Fragenummer.</p></div>
+  <div class="search"><input id="k-term" type="search" placeholder="z. B. Schonmaß Hecht, Barteln, 5.091" value="${esc(kat.term)}" aria-label="Suchbegriff"><select id="k-g" aria-label="Prüfungsgebiet"><option value="0">Alle Gebiete</option>${[1,2,3,4,5].map(g=>`<option value="${g}" ${kat.g==g?"selected":""}>${g} · ${AREAS[g]}</option>`).join("")}<option value="img" ${kat.g==="img"?"selected":""}>Nur Bildfragen</option><option value="weak" ${kat.g==="weak"?"selected":""}>Nur zuletzt falsch</option></select></div>
+  <div id="k-list" class="stack" style="gap:10px"></div></div>`;
+  const t=$("#k-term");t.oninput=()=>{kat.term=t.value;kat.n=40;list()};$("#k-g").onchange=e=>{kat.g=e.target.value;kat.n=40;list()};list();
+}
+function list(){
+  const words=kat.term.toLowerCase().split(/\s+/).filter(Boolean);
+  let L=Q.filter(q=>kat.g==="0"||(kat.g==="img"?q.img:kat.g==="weak"?level(q.id)==="weak":q.g==kat.g));
+  if(words.length)L=L.filter(q=>{const h=(q.id+" "+q.q+" "+q.a.join(" ")+" "+q.e).toLowerCase();return words.every(w=>h.includes(w))});
+  const hl=s=>{let r=esc(s);words.forEach(w=>{if(w.length>1)r=r.replace(new RegExp("("+w.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")+")","gi"),"<mark>$1</mark>")});return r};
+  const box=$("#k-list");
+  box.innerHTML=`<div class="note">${L.length} Treffer</div>`+L.slice(0,kat.n).map(q=>`<div class="item"><div class="row" style="justify-content:space-between"><span class="eyebrow">Frage ${hl(q.id)} · ${AREAS[q.g]}</span><span class="pill ${level(q.id)==="weak"?"redo":""}">${{new:"neu",sure:"sicher",learn:"in Arbeit",weak:"zuletzt falsch"}[level(q.id)]}</span></div><div class="qa">${hl(q.q)}</div>${qImg(q)}<ul>${q.a.map((t,i)=>`<li class="${i===q.k?"k":""}">${"ABC"[i]}) ${hl(t)}</li>`).join("")}</ul><p class="e">${hl(q.e)}</p></div>`).join("")+
+  (L.length>kat.n?`<button class="btn" id="k-more">${Math.min(40,L.length-kat.n)} weitere anzeigen</button>`:"");
+  const m=$("#k-more");if(m)m.onclick=()=>{kat.n+=40;list()};
+}
+
+/* ---------- boot ---------- */
+load();
+fetch("fragen.json").then(r=>{if(!r.ok)throw new Error(r.status);return r.json()}).then(d=>{
+  Q=d;[1,2,3,4,5].forEach(g=>BY[g]=Q.filter(q=>q.g===g));
+  const h=location.hash.slice(1);go(["lernen","pruefung","katalog"].includes(h)?h:"lernen");
+}).catch(()=>{app.innerHTML='<p class="lead">Der Fragenkatalog konnte nicht geladen werden. Bitte lade die Seite neu.</p>'});
+</script>
+<script>if("serviceWorker" in navigator){addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}))}</script>
+</body>
+</html>

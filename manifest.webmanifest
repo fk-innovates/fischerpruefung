@@ -1,0 +1,17 @@
+{
+  "name": "Fischerprüfung Bayern",
+  "short_name": "Fischerprüfung",
+  "description": "Alle 1052 amtlichen Fragen der bayerischen Fischerprüfung mit Erklärungen und Prüfungssimulation.",
+  "lang": "de",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#eef3f1",
+  "theme_color": "#0b6e63",
+  "icons": [
+    {"src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any"},
+    {"src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any"},
+    {"src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"}
+  ]
+}

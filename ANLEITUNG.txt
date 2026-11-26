@@ -1,0 +1,16 @@
+Fischerprüfung Bayern – Web-App aufs Handy bringen
+==================================================
+
+1. Am Mac https://app.netlify.com/drop öffnen und kostenlos anmelden
+   (z. B. mit Google oder E-Mail).
+2. Diesen ganzen Ordner "Fischerpruefung-App" in das Feld ziehen.
+3. Netlify zeigt eine Adresse wie https://xyz-123.netlify.app.
+   Unter "Site configuration > Change site name" kannst du einen
+   schöneren Namen wählen, z. B. fischerpruefung-felix.netlify.app.
+4. Diese Adresse am Handy öffnen:
+   - iPhone (Safari): Teilen-Symbol -> "Zum Home-Bildschirm"
+   - Android (Chrome): Menü ⋮ -> "App installieren" / "Zum Startbildschirm"
+5. Die App einmal mit Internet öffnen. Danach funktioniert sie
+   auch offline (alle Fragen und Bilder sind gespeichert).
+
+Hinweis: Der Lernfortschritt wird nur auf dem jeweiligen Gerät gespeichert.

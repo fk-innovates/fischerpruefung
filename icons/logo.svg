@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0d8070"/>
+      <stop offset="1" stop-color="#074640"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" fill="url(#bg)"/>
+  <!-- Wasserlinien -->
+  <path d="M96 372 Q136 352 176 372 T256 372 T336 372 T416 372" fill="none" stroke="#5fd3bd" stroke-opacity=".55" stroke-width="12" stroke-linecap="round"/>
+  <path d="M136 408 Q166 393 196 408 T256 408 T316 408 T376 408" fill="none" stroke="#5fd3bd" stroke-opacity=".3" stroke-width="10" stroke-linecap="round"/>
+  <!-- Fisch: Körper + Schwanz -->
+  <path d="M150 240 L84 182 Q98 240 84 298 Z" fill="#f4fbf9"/>
+  <path d="M138 240 C190 146 352 136 428 240 C352 344 190 334 138 240 Z" fill="#f4fbf9"/>
+  <!-- Rückenflosse -->
+  <path d="M232 168 Q268 116 330 156 Q286 160 262 178 Z" fill="#f4fbf9"/>
+  <!-- Auge -->
+  <circle cx="376" cy="226" r="13" fill="#074640"/>
+  <!-- Häkchen = bestanden -->
+  <path d="M206 246 L246 284 L318 204" fill="none" stroke="#0b6e63" stroke-width="28" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
